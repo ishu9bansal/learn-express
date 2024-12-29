@@ -1,15 +1,29 @@
 const express = require('express');
 const fs = require('fs');
 const router = express.Router();
+const db = require('../connection');
+const collection = db.collection('students');
+const mongodb = require('mongodb');
 
-router.use(getAllStudents);
 
-router.get("/", (req, res) => {
-    res.json(req.students);
+router.get("/", async (req, res) => {
+    try {
+        const students = await collection.find().toArray();
+        res.json(students);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-router.get("/:id", getStudentById, (req, res) => {
-    res.json(req.student);
+router.get("/:id", getObjectId, async (req, res) => {
+    try {
+        const student = await collection.findOne({
+            _id: req.o_id,
+        });
+        res.json(student);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 router.post("/", (req, res) => {
@@ -79,24 +93,9 @@ router.delete("/:id", (req, res) => {
     })
 });
 
-function getAllStudents(req, res, next) {
-    try {
-        const students = fs.readFileSync('./students.json');
-        req.students = JSON.parse(students);
-        next();
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "unable to open a file on server" });
-        return;
-    }
-    console.log("I will run too!");
-}
-
-function getStudentById(req, res, next) {
-    req.student = req.students.find(student => student.id == req.params.id);
-    if (!req.student) {
-        console.log("No student found with id: ", req.params.id);
-    }
+function getObjectId(req, res, next) {
+    const o_id = new mongodb.ObjectId(req.params.id);
+    req.o_id = o_id;
     next();
 }
 

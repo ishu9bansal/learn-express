@@ -1,6 +1,10 @@
-const express = require('express');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const PORT = 5050;
+const PORT = process.env.PORT;
+const express = require('express');
+const db = require('./connection');
+const collection = db.collection('coll');
 
 const app = express();
 
@@ -8,9 +12,11 @@ app.use(express.json());
 
 app.use(logger);
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     console.log(req.query);
-    res.json({ message: "Hey Everone!" });
+    const cursor = collection.find();
+    const results = await cursor.toArray();
+    res.json(results);
 });
 
 
