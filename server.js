@@ -3,8 +3,7 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 const express = require('express');
-const db = require('./connection');
-const collection = db.collection('coll');
+require('./mongoose_conn');
 
 const app = express();
 
