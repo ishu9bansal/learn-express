@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const router = express.Router();
 const db = require('../connection');
 const collection = db.collection('students');
@@ -26,71 +25,38 @@ router.get("/:id", getObjectId, async (req, res) => {
     }
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     console.log(req.body);
+    try {
+        const acknowledgement = await collection.insertOne(req.body);
+        res.json(acknowledgement);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 
-    const { id, name } = req.body;
-    const newStudent = { id, name };
-    req.students.push(newStudent);
-    fs.writeFile('./students.json', JSON.stringify(req.students), function (err) {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: "unable to open a file while writing on server" });
-            return;
-        }
-        res.status(201).json(newStudent);
-    })
 });
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", getObjectId, async (req, res) => {
     console.log("Editing:", req.params.id);
     console.log(req.body);
-    let students;
     try {
-        students = fs.readFileSync('./students.json');
-        students = JSON.parse(students);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "unable to open a file on server" });
-        return;
-    }
-    students = students.map(student => {
-        return student.id == req.params.id ? { ...student, ...req.body, id: req.params.id } : student;
-    });
-    fs.writeFile('./students.json', JSON.stringify(students), function (err) {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: "unable to open a file while writing on server" });
-            return;
-        }
-        res.json({
-            message: "Updated successfully"
+        const acknowledgement = await collection.updateOne({ _id: req.o_id }, {
+            $set: req.body,
         });
-    })
+        res.json(acknowledgement);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", getObjectId, async (req, res) => {
     console.log("Deleting:", req.params.id);
-    let students;
     try {
-        students = fs.readFileSync('./students.json');
-        students = JSON.parse(students);
+        const acknowledgement = await collection.deleteOne({ _id: req.o_id });
+        res.json(acknowledgement);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "unable to open a file on server" });
-        return;
+        res.status(500).json({ message: err.message });
     }
-    students = students.filter(student => student.id != req.params.id);
-    fs.writeFile('./students.json', JSON.stringify(students), function (err) {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: "unable to open a file while writing on server" });
-            return;
-        }
-        res.json({
-            message: "Deleted successfully"
-        });
-    })
 });
 
 function getObjectId(req, res, next) {
