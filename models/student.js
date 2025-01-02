@@ -1,4 +1,14 @@
 const mongoose = require('mongoose');
+const gradeSchema = mongoose.Schema({
+    course: String,
+    score: Number,
+    maxScore: Number,
+    date: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
 const StudentSchema = mongoose.Schema({
     name: {
         type: String,
@@ -13,6 +23,14 @@ const StudentSchema = mongoose.Schema({
         default: ["Math"]
     },
     age: Number,
+    grades: {
+        type: [gradeSchema],
+        default: [],
+    },
+    profile: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Profile',
+    }
 });
 
 module.exports = mongoose.model('Student', StudentSchema);
