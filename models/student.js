@@ -43,6 +43,7 @@ const StudentSchema = mongoose.Schema({
         _id: mongoose.Schema.Types.ObjectId,
         name: String,
     }],
+    updatedAt: Date,
 });
 
 StudentSchema.methods.calculateGpa = function () {
@@ -62,5 +63,16 @@ StudentSchema.virtual('currentGpa').get(function () {
 });
 
 StudentSchema.set('toJSON', { virtuals: true });
+
+StudentSchema.pre('save', function (next) {
+    console.log(`Student ${this.name} is about to be saved.`);
+    this.updatedAt = Date.now();
+    next();
+});
+
+StudentSchema.post('save', function (doc, next) {
+    console.log(`Student ${doc.name} has been saved.`);
+    next();
+});
 
 module.exports = mongoose.model('Student', StudentSchema);
