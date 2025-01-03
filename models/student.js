@@ -22,7 +22,15 @@ const StudentSchema = mongoose.Schema({
         type: [String],
         default: ["Math"]
     },
-    age: Number,
+    age: {
+        type: Number,
+        max: 100,
+        min: 1,
+        validate: {
+            validator: val => val % 2 === 0,
+            message: prop => `${prop.value} is not an even number`,
+        }
+    },
     grades: {
         type: [gradeSchema],
         default: [],
