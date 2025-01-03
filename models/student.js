@@ -28,7 +28,7 @@ const StudentSchema = mongoose.Schema({
         default: [],
     },
     profile: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
     }
 });
