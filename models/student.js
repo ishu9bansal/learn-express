@@ -45,4 +45,22 @@ const StudentSchema = mongoose.Schema({
     }],
 });
 
+StudentSchema.methods.calculateGpa = function () {
+    if (!this.grades.length) return 0;
+
+    const totalScore = this.grades.reduce((sum, grade) => sum + grade.score, 0);
+    const totalMaxScore = this.grades.reduce((sum, grade) => sum + grade.maxScore, 0);
+    return (totalScore / totalMaxScore) * 10; // Example GPA calculation
+};
+
+StudentSchema.virtual('clubsCount').get(function () {
+    return this.clubs.length;
+});
+
+StudentSchema.virtual('currentGpa').get(function () {
+    return this.calculateGpa();
+});
+
+StudentSchema.set('toJSON', { virtuals: true });
+
 module.exports = mongoose.model('Student', StudentSchema);

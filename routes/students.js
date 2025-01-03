@@ -16,7 +16,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const student = await Student.findById(req.params.id).populate('profile');
-        res.json(student);
+        const currentGpa = student.currentGpa;
+
+        res.json({ student, currentGpa });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
