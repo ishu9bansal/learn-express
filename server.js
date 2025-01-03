@@ -21,6 +21,8 @@ app.get("/", async (req, res) => {
 
 const studentsRouter = require('./routes/students');
 app.use('/students', studentsRouter);
+const clubsRouter = require('./routes/clubs');
+app.use('/clubs', clubsRouter);
 
 function logger(req, res, next) {
     console.log(req.method);

@@ -30,7 +30,11 @@ const StudentSchema = mongoose.Schema({
     profile: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
-    }
+    },
+    clubs: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Club',
+    },
 });
 
 module.exports = mongoose.model('Student', StudentSchema);

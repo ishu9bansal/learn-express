@@ -21,6 +21,21 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+
+router.post("/:id/club", async (req, res) => {
+    try {
+        const clubId = new Types.ObjectId(req.body._id);
+        const student = await Student.findById(req.params.id);
+        if (!student.clubs.includes(clubId)) {
+            student.clubs.push(clubId);
+        }
+        const ack = await student.save();
+        res.json(ack);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 router.post("/:id/profile", async (req, res) => {
     try {
         const newProfile = new Profile(req.body);
