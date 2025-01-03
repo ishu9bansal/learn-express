@@ -15,8 +15,8 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const club = await Club.findById(req.params.id);
-        const students = await Student.find({ clubs: club.id }, { grades: 0, gpa: 0, courses: 0 }).populate('profile');
-        res.json({ club, students });
+        // const students = await Student.find({ clubs: club.id }, { grades: 0, gpa: 0, courses: 0 }).populate('profile');
+        res.json(club);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

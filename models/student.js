@@ -31,10 +31,10 @@ const StudentSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
     },
-    clubs: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Club',
-    },
+    clubs: [{
+        _id: mongoose.Schema.Types.ObjectId,
+        name: String,
+    }],
 });
 
 module.exports = mongoose.model('Student', StudentSchema);

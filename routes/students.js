@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Student = require('../models/student');
 const Profile = require('../models/profile');
+const Club = require('../models/club');
 
 router.get("/", async (req, res) => {
     try {
@@ -24,11 +25,17 @@ router.get("/:id", async (req, res) => {
 
 router.post("/:id/club", async (req, res) => {
     try {
-        const clubId = new Types.ObjectId(req.body._id);
+        const club = await Club.findById(req.body._id);
         const student = await Student.findById(req.params.id);
-        if (!student.clubs.includes(clubId)) {
-            student.clubs.push(clubId);
+        if (club.students.includes(student.id)) {
+            return res.status(400).json({ message: "Student already registered" });
         }
+        club.students.push(student.id);
+        await club.save();
+        student.clubs.push({
+            _id: club.id,
+            name: club.name,
+        });
         const ack = await student.save();
         res.json(ack);
     } catch (err) {
